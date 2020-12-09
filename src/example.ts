@@ -1,14 +1,17 @@
 import express = require('express');
 import {Request, Response} from 'express-serve-static-core';
-import {ExpressReqLogger, reqBodySerializer, resBodySerializer} from './';
+import {ExpressReqLogger, reqSerializer, resSerializer} from './';
 
 const app: express.Application = express();
 const logger = new ExpressReqLogger({
+    logDebugRequestBody: true,
+    logDebugResponseBody: true,
     pinoOptions: {
         enabled: true,
+        level: 'debug',
         serializers: {
-            req: reqBodySerializer,
-            res: resBodySerializer,
+            req: reqSerializer,
+            res: resSerializer,
         },
     }
 });

@@ -1,6 +1,6 @@
 {
   "name": "pino-express-req-logger",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A express logging middleware, logs requests and errors.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

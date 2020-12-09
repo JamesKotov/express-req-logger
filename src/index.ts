@@ -68,6 +68,16 @@ export interface ExpressReqLoggerOptions {
      * If a preconfigured instance is used requests, responses and errors will not be serialized.
      */
     pinoInstance?: pino.Logger;
+
+    /**
+     * Log request raw body with debug level
+     */
+    logDebugRequestBody?: boolean
+
+    /**
+     * Log response raw body with debug level
+     */
+    logDebugResponseBody?: boolean
 }
 
 export class ExpressReqLogger {
@@ -86,6 +96,10 @@ export class ExpressReqLogger {
     /** The pino logger instance used internally by the module. */
     private logger: pino.Logger;
 
+    private logDebugRequestBody: boolean;
+
+    private logDebugResponseBody: boolean;
+
     /**
      * Create a new instance of ExpressReqLogger to use in a Express App.
      * @param options - ExpressReqLoggerOptions to configure the middleware.
@@ -97,6 +111,8 @@ export class ExpressReqLogger {
      * @param options.pinoOptions - This object will be passed to pino to configure the logger instance.
      * @param options.extreme - If set to true, the extreme mode of pino will be used for extra performance.
      * @param options.pinoInstance - Pass in your own preconfigured instance of the pino logger.
+     * @param options.logDebugRequestBody - Log request raw body with debug level
+     * @param options.logDebugResponseBody - Log response raw body with debug level
      */
     constructor(options?: ExpressReqLoggerOptions) {
         this.middleware = this.middleware.bind(this);
@@ -150,6 +166,10 @@ export class ExpressReqLogger {
         this.alwaysError = opts.alwaysError || false;
 
         delete opts.alwaysError;
+
+        this.logDebugRequestBody = !!opts.logDebugRequestBody;
+
+        this.logDebugResponseBody = !!opts.logDebugResponseBody;
     }
 
     /**
@@ -240,6 +260,10 @@ export class ExpressReqLogger {
         this.setResponseTime(req, res);
 
         const status: any = res.statusCode;
+
+        if (this.logDebugResponseBody) {
+            req.log.debug({responseBody: res.body})
+        }
 
         if (status < 400) {
             return req.log.info(
@@ -340,6 +364,10 @@ export class ExpressReqLogger {
             req.rawBody = Buffer.concat(reqChunks).toString('utf8');
 
             req.log.info({req, startDate: req.start.toUTCString()}, this.getResponseEndSuffix(req, null));
+
+            if (self.logDebugRequestBody) {
+                req.log.debug({requestBody: req.rawBody})
+            }
 
             next();
         });
