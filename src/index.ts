@@ -261,11 +261,11 @@ export class ExpressReqLogger {
         const status: any = res.statusCode;
 
         if (this.logDebugRequestBody) {
-            req.log.debug({requestBody: req.body})
+            req.log.debug({requestBody: req.body || null})
         }
 
         if (this.logDebugResponseBody) {
-            req.log.debug({responseBody: res.body})
+            req.log.debug({responseBody: res.body || null})
         }
 
         if (status < 400) {
