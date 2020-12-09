@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from 'express-serve-static-core';
 import pino from 'pino';
 import { v4 as uuidv4 } from 'uuid';
-import {errSerializer, reqBodySerializer, reqSerializer, resBodySerializer, resSerializer} from './serializers';
+import {errSerializer, reqSerializer, resSerializer} from './serializers';
 
-export {errSerializer, reqBodySerializer, reqSerializer, resBodySerializer, resSerializer} from './serializers';
+export {errSerializer, reqSerializer, resSerializer} from './serializers';
 
 declare module 'express-serve-static-core' {
     interface Request {
@@ -11,7 +11,6 @@ declare module 'express-serve-static-core' {
         start: Date;
         log: pino.Logger;
         responseTime: number;
-        rawBody: string;
     }
 
     interface Response {
@@ -261,6 +260,10 @@ export class ExpressReqLogger {
 
         const status: any = res.statusCode;
 
+        if (this.logDebugRequestBody) {
+            req.log.debug({requestBody: req.body})
+        }
+
         if (this.logDebugResponseBody) {
             req.log.debug({responseBody: res.body})
         }
@@ -351,26 +354,7 @@ export class ExpressReqLogger {
             self.endRequestError(e, req, res)
         );
 
-        const reqChunks: any = [];
-        req.on('data', (chunk: any) => {
-            if (chunk) {
-                reqChunks.push(Buffer.from(chunk));
-            }
-        });
-        req.on('end', (chunk: any) => {
-            if (chunk) {
-                reqChunks.push(Buffer.from(chunk));
-            }
-            req.rawBody = Buffer.concat(reqChunks).toString('utf8');
-
-            req.log.info({req, startDate: req.start.toUTCString()}, this.getResponseEndSuffix(req, null));
-
-            if (self.logDebugRequestBody) {
-                req.log.debug({requestBody: req.rawBody})
-            }
-
-            next();
-        });
+        await next();
 
     }
 

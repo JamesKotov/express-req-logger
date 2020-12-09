@@ -1,4 +1,4 @@
-import {errSerializer, reqBodySerializer, reqSerializer, resBodySerializer, resSerializer} from '../';
+import {errSerializer, reqSerializer, resSerializer} from '../';
 
 describe('Serializers', () => {
   describe('reqSerializer', () => {
@@ -17,7 +17,6 @@ describe('Serializers', () => {
     });
     test('Should serialize a standard req object', () => {
         const req: any = {
-            rawBody: 'blah',
             headers: ['header', 'array'],
             id: 'id',
             ip: '127.0.0.1',
@@ -25,10 +24,9 @@ describe('Serializers', () => {
             url: '/url',
         };
 
-        const serialized = reqBodySerializer(req);
+        const serialized = reqSerializer(req);
 
         expect(serialized).toEqual({
-            body: 'blah',
             headers: ['header', 'array'],
             id: 'id',
             ip: '127.0.0.1',
@@ -76,10 +74,9 @@ describe('Serializers', () => {
             statusCode: 200
         };
 
-        const serialized = resBodySerializer(res);
+        const serialized = resSerializer(res);
 
         expect(serialized).toEqual({
-            body: 'blah',
             headers: ['header', 'array'],
             status: 200
         });
