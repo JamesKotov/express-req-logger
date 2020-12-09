@@ -342,6 +342,15 @@ export class ExpressReqLogger {
             }
             res.body = Buffer.concat(resChunks).toString('utf8');
 
+            const contentType: string = String(res.getHeader('content-type') || '');
+            if (contentType.startsWith('application/json')) {
+                try {
+                    res.body = JSON.parse(res.body);
+                } catch (err) {
+                    req.log.error({err}, 'Error parsing response body');
+                }
+            }
+
             // @ts-ignore
             defaultEnd.apply(res, restArgs);
         };
