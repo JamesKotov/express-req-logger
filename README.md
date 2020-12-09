@@ -9,7 +9,7 @@
 
 A simple logging middleware for the [express] http framework for nodejs. This module uses the [pino] logger and was inspired by the [koa-req-logger] module. This module was created with typescript, and is compatible with both javascript and typescript projects.
 
-As well as logging requests and providing a log object in requests, this module also sets the HTTP Headers Date, X-Response-Time and X-Request-ID.
+As well as logging requests and providing a log object in requests, this module also sets the HTTP Headers and X-Request-ID.
 - **X-Request-ID** Header is set to a new uuid or the value of the X-Request-ID header sent with the request. This allows requests to be tracked through microservices.
 - **Date** Header is set to the date and time that the request was received.
 
@@ -26,8 +26,6 @@ npm install express-req-logger
 ```
 
 # Usage
-
-For a full API Reference see the documentation [here⇗](https://drbarnabus.github.io/koa-req-logger/globals.html).
 
 ### TypeScript
 ```ts
