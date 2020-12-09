@@ -63,3 +63,5 @@ typings/
 # ignore built files
 dist
 dist/**/*
+
+.idea/

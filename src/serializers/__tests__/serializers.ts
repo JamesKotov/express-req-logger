@@ -1,62 +1,102 @@
-import { errSerializer, reqSerializer, resSerializer } from '../';
+import {errSerializer, reqBodySerializer, reqSerializer, resBodySerializer, resSerializer} from '../';
 
 describe('Serializers', () => {
   describe('reqSerializer', () => {
     test('Should serialize a standard req object', () => {
-      const req = {
-        headers: ['headers', 'array'],
-        id: 'id',
-        ip: '127.0.0.1',
-        method: 'method',
-        url: '/url',
-      };
+        const req: any = {
+            headers: ['header', 'array'],
+            id: 'id',
+            ip: '127.0.0.1',
+            method: 'method',
+            url: '/url',
+        };
 
-      const serialized = reqSerializer(req);
+        const serialized = reqSerializer(req);
 
-      expect(serialized).toEqual(req);
+        expect(serialized).toEqual(req);
+    });
+    test('Should serialize a standard req object', () => {
+        const req: any = {
+            rawBody: 'blah',
+            headers: ['header', 'array'],
+            id: 'id',
+            ip: '127.0.0.1',
+            method: 'method',
+            url: '/url',
+        };
+
+        const serialized = reqBodySerializer(req);
+
+        expect(serialized).toEqual({
+            body: 'blah',
+            headers: ['header', 'array'],
+            id: 'id',
+            ip: '127.0.0.1',
+            method: 'method',
+            url: '/url',
+        });
     });
     test('Should serialize a non-standard req object, and remove all unwanted members', () => {
-      const req = {
-        headers: ['headers', 'array'],
-        id: 'id',
-        ip: '127.0.0.1',
-        method: 'method',
-        nonStandard: 'method',
-        url: '/url',
-      };
+        const req: any = {
+            headers: ['header', 'array'],
+            id: 'id',
+            ip: '127.0.0.1',
+            method: 'method',
+            nonStandard: 'method',
+            url: '/url',
+        };
 
-      const serialized = reqSerializer(req);
+        const serialized = reqSerializer(req);
 
-      expect(serialized.nonStandard).toBeUndefined();
-      expect(serialized.ip).toBeDefined();
-      expect(serialized.ip).toEqual('127.0.0.1');
+        expect(serialized.nonStandard).toBeUndefined();
+        expect(serialized.ip).toBeDefined();
+        expect(serialized.ip).toEqual('127.0.0.1');
     });
   });
 
   describe('resSerializer', () => {
     test('Should serialize a standard res object', () => {
-      const res = {
-        headers: ['header', 'array'],
-        status: 200
-      };
+        const res: any = {
+            getHeaders: () => ['header', 'array'],
+            statusCode: 200
+        };
 
-      const serialized = resSerializer(res);
+        const serialized = resSerializer(res);
 
-      expect(serialized).toEqual(res);
+        expect(serialized).toEqual({
+            headers: ['header', 'array'],
+            status: 200
+        });
+    });
+
+    test('Should serialize a standard res object', () => {
+        const res: any = {
+            body: 'blah',
+            getHeaders: () => ['header', 'array'],
+            statusCode: 200
+        };
+
+        const serialized = resBodySerializer(res);
+
+        expect(serialized).toEqual({
+            body: 'blah',
+            headers: ['header', 'array'],
+            status: 200
+        });
     });
 
     test('Should serialize a non-standard res object, and remove all unwanted members', () => {
-      const res = {
-        headers: ['header', 'array'],
-        nonStandard: 'member',
-        status: 200
-      };
+        const res: any = {
+            getHeaders: () => ['header', 'array'],
+            nonStandard: 'member',
+            statusCode: 200
+        };
 
-      const serialized = resSerializer(res);
+        const serialized = resSerializer(res);
 
-      expect(serialized.nonStandard).toBeUndefined();
-      expect(serialized.status).toBeDefined();
-      expect(serialized.status).toEqual(200);
+        expect(serialized.nonStandard).toBeUndefined();
+        expect(serialized.status).toBeDefined();
+        expect(serialized.status).toEqual(200);
     });
   });
 

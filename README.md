@@ -12,7 +12,6 @@ A simple logging middleware for the [express] http framework for nodejs. This mo
 As well as logging requests and providing a log object in requests, this module also sets the HTTP Headers Date, X-Response-Time and X-Request-ID.
 - **X-Request-ID** Header is set to a new uuid or the value of the X-Request-ID header sent with the request. This allows requests to be tracked through microservices.
 - **Date** Header is set to the date and time that the request was received.
-- **X-Response-Time** Header is set to the response time of the request in milliseconds.
 
 ## Contents
 - [Install](#Install)
@@ -22,8 +21,8 @@ As well as logging requests and providing a log object in requests, this module 
 
 # Install
 ```
-yarn add koa-req-logger
-npm install koa-req-logger
+yarn add express-req-logger
+npm install express-req-logger
 ```
 
 # Usage
@@ -32,46 +31,33 @@ For a full API Reference see the documentation [here⇗](https://drbarnabus.gith
 
 ### TypeScript
 ```ts
-import Koa from 'koa';
-import { KoaReqLogger, KoaReqLoggerOptions } from 'koa-req-logger';
+import express = require('express');
+import {NextFunction, Request, Response} from 'express-serve-static-core';
+import {ExpressReqLogger, resBodySerializer} from './';
 
-const opts: KoaReqLoggerOptions = {
-  disableIdHeader: false;
-};
-
-const app = new Koa();
-const logger = new KoaReqLogger(opts);
+const app: express.Application = express();
+const logger = new ExpressReqLogger({
+    pinoOptions: {
+        enabled: true,
+        serializers: {
+            res: resBodySerializer,
+        }
+    }
+});
 app.use(logger.getMiddleware());
 
-app.use((ctx, next) => {
-  ctx.log.info('Some Log Message');
-  ctx.log.warn({ obj: 'object' }, 'Log a message with an object');
-
-  ctx.throw(400, 'Bad Request');
+app.get('/', async (req: Request, res: Response, next: NextFunction) => {
+    res.status(200);
+    res.json({
+        data: 'Hello World!'
+    });
 });
 
-app.listen();
-```
-
-### JavaScript
-```js
-const Koa = require('koa');
-const { KoaReqLogger } = require('koa-req-logger');
-
-const app = new Koa();
-
-const logger = new KoaReqLogger();
-app.use(logger.getMiddleware());
-
-app.use((ctx, next) => {
-  ctx.log.info('Some Log Message');
-  ctx.log.warn({ obj: 'object' }, 'Log a message with an object');
-
-  ctx.throw(400, 'Bad Request');
-});
+app.use(logger.getErrorHandlingMiddleware());
 
 app.listen(3000);
 ```
+
 
 ### Output
 Produces a similar output to the following json, which can then be parsed with pino's shell utility to pretty-print the output.
@@ -93,22 +79,21 @@ npm test
 Licensed under [MIT](./LICENSE).
 
 <!-- Links --->
-[koa]: https://github.com/koajs/koa
+[express]: https://github.com/expressjs/express
 [pino]: https://github.com/pinojs/pino
-[koa-pino-logger]: https://github.com/pinojs/koa-pino-logger
-[koa-router]: https://github.com/alexmingoia/koa-router
+[koa-req-logger]: https://github.com/DrBarnabus/koa-req-logger
 
 <!-- Badges --->
-[npm-badge]: https://img.shields.io/npm/v/koa-req-logger.svg?style=flat-square
-[npm-url]: https://www.npmjs.com/package/koa-req-logger
-[npmd-badge]: https://img.shields.io/npm/dw/koa-req-logger.svg?style=flat-square
-[travis-badge]: https://img.shields.io/travis/DrBarnabus/koa-req-logger/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/DrBarnabus/koa-req-logger
-[dependencies-badge]: https://david-dm.org/drbarnabus/koa-req-logger.svg?style=flat-square
-[codecov-badge]: https://img.shields.io/codecov/c/github/DrBarnabus/koa-req-logger/master.svg?style=flat-square
-[codecov-url]: https://codecov.io/gh/DrBarnabus/koa-req-logger
-[dependencies-url]: https://david-dm.org/drbarnabus/koa-req-logger
-[devDependencies-badge]: https://david-dm.org/drbarnabus/koa-req-logger/dev-status.svg?style=flat-square
-[devDependencies-url]: https://david-dm.org/drbarnabus/koa-req-logger?type=dev
-[snyk-badge]: https://snyk.io/test/github/DrBarnabus/koa-req-logger/badge.svg?targetFile=package.json&style=flat-square
-[snyk-url]: https://snyk.io/test/github/DrBarnabus/koa-req-logger?targetFile=package.json
+[npm-badge]: https://img.shields.io/npm/v/express-req-logger.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/express-req-logger
+[npmd-badge]: https://img.shields.io/npm/dw/express-req-logger.svg?style=flat-square
+[travis-badge]: https://img.shields.io/travis/DrBarnabus/express-req-logger/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/DrBarnabus/express-req-logger
+[dependencies-badge]: https://david-dm.org/drbarnabus/express-req-logger.svg?style=flat-square
+[codecov-badge]: https://img.shields.io/codecov/c/github/DrBarnabus/express-req-logger/master.svg?style=flat-square
+[codecov-url]: https://codecov.io/gh/DrBarnabus/express-req-logger
+[dependencies-url]: https://david-dm.org/drbarnabus/express-req-logger
+[devDependencies-badge]: https://david-dm.org/drbarnabus/express-req-logger/dev-status.svg?style=flat-square
+[devDependencies-url]: https://david-dm.org/drbarnabus/express-req-logger?type=dev
+[snyk-badge]: https://snyk.io/test/github/DrBarnabus/express-req-logger/badge.svg?targetFile=package.json&style=flat-square
+[snyk-url]: https://snyk.io/test/github/DrBarnabus/express-req-logger?targetFile=package.json

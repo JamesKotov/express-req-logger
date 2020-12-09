@@ -3,6 +3,11 @@ import {Request} from 'express-serve-static-core';
 const reqProto = Object.create(
     {},
     {
+        body: {
+            enumerable: true,
+            value: '',
+            writable: true
+        },
         headers: {
             enumerable: true,
             value: {},
@@ -27,11 +32,11 @@ const reqProto = Object.create(
             enumerable: true,
             value: '',
             writable: true
-        }
+        },
     }
 );
 
-export function reqSerializer(req: Request) {
+export function reqBodySerializer(req: Request) {
     const sReq = Object.create(reqProto);
 
     sReq.id = req.id;
@@ -39,6 +44,7 @@ export function reqSerializer(req: Request) {
     sReq.url = req.url;
     sReq.headers = req.headers;
     sReq.ip = req.ip;
+    sReq.body = req.rawBody;
 
     return sReq;
 }

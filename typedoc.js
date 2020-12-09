@@ -6,5 +6,5 @@ module.exports = {
   excludeExternals: true,
   excludeNotExported: true,
   excludePrivate: true,
-  name: 'KoaReqLogger (koa-req-logger)'
+  name: 'ExpressReqLogger (express-req-logger)'
 }
