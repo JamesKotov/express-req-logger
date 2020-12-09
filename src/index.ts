@@ -322,6 +322,8 @@ export class ExpressReqLogger {
             res.removeHeader('Date'); // Remove default header set by express
         }
 
+        req.log.info({req, startDate: req.start.toUTCString()}, this.getResponseEndSuffix(req, null));
+
         const defaultWrite = res.write;
         const defaultEnd = res.end;
         const resChunks: any = [];
